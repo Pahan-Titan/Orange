@@ -28,7 +28,7 @@ public class DataBase {
 	}
 	
 	public static String[][] loadData(String tab, String nameCol1, String nameCol2){
-		String[][] top_fruit = new String[10][2];
+		String[][] top = new String[10][2];
 		String selectTableSQL = "SELECT " + nameCol1 + ", " + nameCol2 + " from " + tab;
 		try {
 		    Connection dbConnection = getDBConnection();
@@ -39,10 +39,8 @@ public class DataBase {
 		    // » если что то было получено то цикл while сработает
 		    int row = 0;
 		    while (rs.next()) {
-		        String col1 = rs.getString(nameCol1);
-		        String col2 = rs.getString(nameCol2);
-		        top_fruit[row][0] = col1;
-			    top_fruit[row][1] = col2;
+		        top[row][0] = rs.getString(nameCol1);
+			    top[row][1] = rs.getString(nameCol2);
 //			    System.out.println("fruit : " + top_fruit[row][0]);
 //			    System.out.println("quantity_buy : " + top_fruit[row][1]);
 			    row++;
@@ -50,16 +48,41 @@ public class DataBase {
 		} catch (SQLException e) {
 		    System.out.println(e.getMessage());
 		}
-		return top_fruit;
+		return top;
 
 	}
 	
-
-/*	public void addData() throws ClassNotFoundException, SQLException{
-		Class.forName("org.postgresql.Driver");
-		Connection connection = DriverManager.getConnection("jdbc:postgresql://hostname:port/dbname","Orange", "orange");
-		connection.close();
-	}*/
+	public static String[] loadData (String tab, String nameCol){
+		String[] comBox = new String[251];
+	    int row = 0;
+		String selectTableSQL = "SELECT " + nameCol + " from " + tab;
+		try {
+		    Connection dbConnection = getDBConnection();
+		    Statement statement = dbConnection.createStatement();
+		    ResultSet rs = statement.executeQuery(selectTableSQL);
+		    while (rs.next()) {
+		        comBox[row] = rs.getString(nameCol);
+			    row++;
+		    }
+		} catch (SQLException e) {
+		    System.out.println(e.getMessage());
+		}
+		return comBox;
+	}
+	
+	public static void addData (String name, String phone, String email, String fruit, String quantity_buy, String organization, String country, int addres){
+		String addDataSQL = "INSERT INTO client VALUES ('" + name + "', '" + phone + "', '" + email + "', '" + country + "', '" + fruit + "', '" + organization + "', " + addres + ", '" + quantity_buy + "')";
+		try {
+			Connection dbConnection = getDBConnection();
+			Statement statement;
+			statement = dbConnection.createStatement();
+			dbConnection = getDBConnection();
+			statement.execute(addDataSQL);
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		System.out.println(addDataSQL);
+	}
 	
 	
 	

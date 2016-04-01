@@ -46,10 +46,6 @@ class TableTop extends AbstractTableModel {
         return getValueAt(0, c).getClass();
     }
  
-   /* public boolean isCellEditable(int row, int col) {
-        return true;
-    }*/
- 
     public void setValueAt(Object value, int row, int col) {
     }
 }

@@ -1,5 +1,6 @@
 package ua.kurs.kp;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import javax.swing.JFrame;
@@ -10,7 +11,15 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.TextEvent;
+
 import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -22,15 +31,26 @@ public class Window {
 	private JFrame frmOrange;
 	private JTable table1;
 	private JTable table2;
-	private JTextField txtFruit1;
 	private JTextField txtQun;
-	private JTextField txtCountry;
 	private JTextField txtFullName;
 	private JTextField txtMobilePhone;
 	private JTextField txtEmail;
 	private JTextField textField;
 	private JTextField textField_1;
-
+	private int id = 0;
+	
+	
+	//загружаем данные из БД используя метод
+	String fruitBuy[][] = DataBase.loadData("fruit", "fruit", "quantity_buy");
+	String countryBuy[][] = DataBase.loadData("country", "country", "quantity_buy");
+	String fruitBox[] = DataBase.loadData("fruit", "fruit");
+	String countryBox[] = DataBase.loadData("country", "country");
+	String fruitSumm[][] = DataBase.loadData("fruit", "price", "storage_time");
+	String countryDistance[][] = DataBase.loadData("country", "country", "distance");
+/*	String fruitStorage[] = DataBase.loadData("fruit", "storage_time");
+	String fruitPrice[] = DataBase.loadData("fruit", "price");
+*/
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -42,6 +62,7 @@ public class Window {
 				}
 			}
 		});
+		DataBase.addData("name", "phone", "email", "fruit", "organization", "country", "addres", 15);
 	}
 
 	public Window() {
@@ -56,18 +77,14 @@ public class Window {
 		frmOrange.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		JPanel panel2 = new JPanel(null);
 		
+					/**************** Первая вкладка ****************/
 		//иницыализацыя первой вкладки
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		
-					/**************** Первая вкладка ****************/
 		//создание вкладок
 		JPanel panel1 = new JPanel(null);
 		tabbedPane.addTab("ТOP", panel1);
-		
-		//загружаем данные из БД используя метод
-		String Fruit[][] = DataBase.loadData("fruit", "fruit", "quantity_buy");
-		String Country[][] = DataBase.loadData("country", "country", "quantity_buy");;
-		
+
 		//создание таблиц и применение моделей
 		JScrollPane scrollPane1 = new JScrollPane();
 		scrollPane1.setBounds(10, 11, 322, 183);
@@ -76,18 +93,7 @@ public class Window {
 		table1.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		table1.setBounds(10, 11, 322, 317);
 		table1.setModel(new DefaultTableModel(
-			new Object[][] {
-				{"Orange", "18"},
-				{"Apple", "9"},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-			},
+			fruitBuy,
 			new String[] {
 				"Fruit", "Sold"
 			}
@@ -118,7 +124,7 @@ public class Window {
 		table2.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		table2.setBounds(10, 11, 322, 317);
 		table2.setModel(new DefaultTableModel(
-			Country,
+			countryBuy,
 			new String[] {
 				"Country", "Buy"
 			}
@@ -143,54 +149,37 @@ public class Window {
 		scrollPane2.setViewportView(table2);
 		
 					/**************** Вторая вкладка ****************/
+		
 		tabbedPane.addTab("Order", panel2);
 		
-		txtFruit1 = new JTextField();
-		txtFruit1.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		txtFruit1.setBounds(49, 11, 175, 20);
-		panel2.add(txtFruit1);
-		txtFruit1.setColumns(10);
-		
 		txtQun = new JTextField();
-		txtQun.setText("0");
 		txtQun.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		txtQun.setColumns(10);
-		txtQun.setBounds(268, 11, 51, 20);
+		txtQun.setBounds(193, 40, 31, 20);
 		panel2.add(txtQun);
-		
-		JLabel lblX = new JLabel("qun.:");
-		lblX.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblX.setBounds(234, 13, 39, 17);
-		panel2.add(lblX);
 		
 		JLabel lblPriceFor = new JLabel("Price for  1 ton:");
 		lblPriceFor.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblPriceFor.setBounds(10, 42, 104, 17);
 		panel2.add(lblPriceFor);
 		
-		JLabel label1 = new JLabel("   ---");
+		final JLabel label1 = new JLabel();
 		label1.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		label1.setBounds(112, 42, 65, 17);
+		label1.setBounds(112, 42, 51, 17);
 		panel2.add(label1);
 		
 		JLabel lblFor = new JLabel("For");
 		lblFor.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblFor.setBounds(193, 42, 27, 17);
+		lblFor.setBounds(167, 42, 27, 17);
 		panel2.add(lblFor);
-		
-		JLabel label2 = new JLabel("  ---");
-		label2.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		label2.setBounds(215, 42, 27, 17);
-		panel2.add(label2);
 		
 		JLabel lblTon = new JLabel("ton:");
 		lblTon.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblTon.setBounds(249, 42, 39, 17);
+		lblTon.setBounds(234, 42, 39, 17);
 		panel2.add(lblTon);
 		
-		JLabel label3 = new JLabel("  ---");
+		final JLabel label3 = new JLabel("  ---");
 		label3.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		label3.setBounds(280, 42, 39, 17);
+		label3.setBounds(265, 43, 39, 17);
 		panel2.add(label3);
 		
 		JLabel lblStorageTime = new JLabel("Storage time:");
@@ -198,36 +187,20 @@ public class Window {
 		lblStorageTime.setBounds(10, 70, 89, 17);
 		panel2.add(lblStorageTime);
 		
-		JLabel label4 = new JLabel("   ---");
+		final JLabel label4 = new JLabel("");
 		label4.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		label4.setBounds(98, 70, 51, 17);
+		label4.setBounds(98, 70, 44, 17);
 		panel2.add(label4);
-		
-		JLabel lblDay = new JLabel("day");
-		lblDay.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblDay.setBounds(148, 70, 39, 17);
-		panel2.add(lblDay);
-		
-		txtCountry = new JTextField();
-		txtCountry.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		txtCountry.setColumns(10);
-		txtCountry.setBounds(447, 11, 244, 20);
-		panel2.add(txtCountry);
 		
 		JLabel lblDistance = new JLabel("Distance:");
 		lblDistance.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblDistance.setBounds(382, 40, 65, 17);
 		panel2.add(lblDistance);
 		
-		JLabel label5 = new JLabel("   ---");
+		final JLabel label5 = new JLabel("");
 		label5.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		label5.setBounds(447, 40, 65, 17);
 		panel2.add(label5);
-		
-		JLabel label6 = new JLabel("km");
-		label6.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		label6.setBounds(522, 40, 39, 17);
-		panel2.add(label6);
 		
 		JLabel lblDeliveryTime = new JLabel("Delivery time:");
 		lblDeliveryTime.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -349,11 +322,24 @@ public class Window {
 		lblDeliveryMethod.setBounds(382, 70, 114, 17);
 		panel2.add(lblDeliveryMethod);
 		
-		JComboBox comboBox = new JComboBox();
-		comboBox.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		comboBox.setModel(new DefaultComboBoxModel(new String[] {"Fura", "Aircraft", "Ship"}));
-		comboBox.setBounds(496, 68, 121, 20);
-		panel2.add(comboBox);
+		final JComboBox comboBox1 = new JComboBox();
+		comboBox1.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		comboBox1.setModel(new DefaultComboBoxModel(fruitBox));
+		comboBox1.setBounds(50, 11, 175, 20);
+		panel2.add(comboBox1);
+		
+		final JComboBox comboBox2 = new JComboBox();
+		comboBox2.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		comboBox2.setModel(new DefaultComboBoxModel(countryBox));
+		comboBox2.setBounds(447, 13, 200, 20);
+		panel2.add(comboBox2);
+		
+		final JComboBox comboBox3 = new JComboBox();
+		comboBox3.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		comboBox3.setModel(new DefaultComboBoxModel(new String[] {"Fura", "Aircraft", "Ship"}));
+		comboBox3.setBounds(496, 68, 121, 20);
+		panel2.add(comboBox3);
+		
 		GroupLayout groupLayout = new GroupLayout(frmOrange.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
@@ -369,6 +355,49 @@ public class Window {
 					.addComponent(tabbedPane, GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
 					.addContainerGap())
 		);
+		
 		frmOrange.getContentPane().setLayout(groupLayout);
+		
+		//слушатель comboBox
+		ActionListener fruitListener = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+		    	int id = 0;
+		    	while (fruitBuy[id][0] !=null && fruitBuy[id][1] !=null){
+			    	if (fruitBuy[id][0].equals(comboBox1.getSelectedItem())){
+			    		label1.setText(fruitSumm[id][0] + "$");
+			    		label4.setText(fruitSumm[id][1] + " day");
+			    	}
+			    	id++;
+		    	}
+			}
+		};
+		
+		ActionListener countryListener = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+		    	id = 0;
+		    	while (countryDistance[id][1] !=null){
+			    	if (countryDistance[id][0].equals(comboBox2.getSelectedItem())){
+			    		label5.setText(countryDistance[id][1] + " km");
+			    	}
+			    	id++;
+		    	}
+			}
+		};
+		
+		///////////////////////////////////
+		
+/*		ActionListener textListener = new ActionListener() {
+			public void textValueChanged(TextEvent e) {
+				if (txtQun.getText() != null) label3.setText(Integer.toString(Integer.parseInt(txtQun.getText())* Integer.parseInt(fruitSumm[id][0])));
+			}
+			@Override
+			public void actionPerformed(ActionEvent e) {
+			}
+		};*/
+		
+		comboBox1.addActionListener(fruitListener);
+		comboBox2.addActionListener(countryListener);
+		comboBox3.addActionListener(fruitListener);
+		txtQun.addActionListener(textListener);
 	}
 }
