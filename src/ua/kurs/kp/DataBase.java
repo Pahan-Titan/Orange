@@ -27,6 +27,28 @@ public class DataBase {
 	    return dbConnection;
 	}
 	
+	public static String[][] loadData(String tab, String nameCol1, String nameCol2, String nameCol3){
+		String[][] del = new String[3][3];
+		String selectTableSQL = "SELECT " + nameCol1 + ", " + nameCol2 + ", " + nameCol3 + " from " + tab;
+		try {
+		    Connection dbConnection = getDBConnection();
+		    Statement statement = dbConnection.createStatement();
+		    // выбираем данные с БД
+		    ResultSet rs = statement.executeQuery(selectTableSQL);
+		    // И если что то было получено то цикл while сработает
+		    int row = 0;
+		    while (rs.next()) {
+		    	del[row][0] = rs.getString(nameCol1);
+		    	del[row][1] = rs.getString(nameCol2);
+		    	del[row][2] = rs.getString(nameCol3);
+			    row++;
+		    }
+		} catch (SQLException e) {
+		    System.out.println(e.getMessage());
+		}
+		return del;
+	}
+	
 	public static String[][] loadData(String tab, String nameCol1, String nameCol2){
 		String[][] top = new String[10][2];
 		String selectTableSQL = "SELECT " + nameCol1 + ", " + nameCol2 + " from " + tab;
@@ -41,8 +63,6 @@ public class DataBase {
 		    while (rs.next()) {
 		        top[row][0] = rs.getString(nameCol1);
 			    top[row][1] = rs.getString(nameCol2);
-//			    System.out.println("fruit : " + top_fruit[row][0]);
-//			    System.out.println("quantity_buy : " + top_fruit[row][1]);
 			    row++;
 		    }
 		} catch (SQLException e) {
@@ -70,8 +90,8 @@ public class DataBase {
 		return comBox;
 	}
 	
-	public static void addData (String name, String phone, String email, String fruit, String quantity_buy, String organization, String country, int addres){
-		String addDataSQL = "INSERT INTO client VALUES ('" + name + "', '" + phone + "', '" + email + "', '" + country + "', '" + fruit + "', '" + organization + "', " + addres + ", '" + quantity_buy + "')";
+	public static void addData (String name, String phone, String email, String country, String organization, String fruit){
+		String addDataSQL = "INSERT INTO client VALUES ('" + name + "', '" + phone + "', '" + email + "', '" + country + "', '" + organization + "', '" + fruit + "')";
 		try {
 			Connection dbConnection = getDBConnection();
 			Statement statement;
@@ -81,7 +101,6 @@ public class DataBase {
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
-		System.out.println(addDataSQL);
 	}
 	
 	

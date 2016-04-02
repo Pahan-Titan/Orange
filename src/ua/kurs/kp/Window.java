@@ -1,8 +1,9 @@
 package ua.kurs.kp;
 
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -12,15 +13,9 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
-
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.TextEvent;
-
+import javax.swing.event.DocumentListener;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
@@ -33,23 +28,23 @@ public class Window {
 	private JTable table2;
 	private JTextField txtQun;
 	private JTextField txtFullName;
-	private JTextField txtMobilePhone;
+	private JTextField txtPhone;
 	private JTextField txtEmail;
-	private JTextField textField;
-	private JTextField textField_1;
-	private int id = 0;
-	
+	private JTextField txtOrganization;
+	private int price;
+	private int summ;
+	private int time_storage;
+	private int time_delivery;
 	
 	//загружаем данные из Ѕƒ использу€ метод
 	String fruitBuy[][] = DataBase.loadData("fruit", "fruit", "quantity_buy");
 	String countryBuy[][] = DataBase.loadData("country", "country", "quantity_buy");
 	String fruitBox[] = DataBase.loadData("fruit", "fruit");
 	String countryBox[] = DataBase.loadData("country", "country");
+	String deliveryBox[] = DataBase.loadData("delivery", "metod");
 	String fruitSumm[][] = DataBase.loadData("fruit", "price", "storage_time");
 	String countryDistance[][] = DataBase.loadData("country", "country", "distance");
-/*	String fruitStorage[] = DataBase.loadData("fruit", "storage_time");
-	String fruitPrice[] = DataBase.loadData("fruit", "price");
-*/
+	String delivery[][] = DataBase.loadData("delivery", "metod", "price_for_km", "speed");
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -62,7 +57,6 @@ public class Window {
 				}
 			}
 		});
-		DataBase.addData("name", "phone", "email", "fruit", "organization", "country", "addres", 15);
 	}
 
 	public Window() {
@@ -74,6 +68,7 @@ public class Window {
 		frmOrange = new JFrame();
 		frmOrange.setTitle("Orange+");
 		frmOrange.setBounds(100, 100, 745, 417);
+		frmOrange.setLocationRelativeTo(null);
 		frmOrange.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		JPanel panel2 = new JPanel(null);
 		
@@ -177,9 +172,9 @@ public class Window {
 		lblTon.setBounds(234, 42, 39, 17);
 		panel2.add(lblTon);
 		
-		final JLabel label3 = new JLabel("  ---");
+		final JLabel label3 = new JLabel("");
 		label3.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		label3.setBounds(265, 43, 39, 17);
+		label3.setBounds(265, 43, 107, 17);
 		panel2.add(label3);
 		
 		JLabel lblStorageTime = new JLabel("Storage time:");
@@ -199,7 +194,7 @@ public class Window {
 		
 		final JLabel label5 = new JLabel("");
 		label5.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		label5.setBounds(447, 40, 65, 17);
+		label5.setBounds(447, 40, 150, 17);
 		panel2.add(label5);
 		
 		JLabel lblDeliveryTime = new JLabel("Delivery time:");
@@ -207,37 +202,27 @@ public class Window {
 		lblDeliveryTime.setBounds(382, 98, 89, 17);
 		panel2.add(lblDeliveryTime);
 		
-		JLabel label7 = new JLabel("   ---");
+		final JLabel label7 = new JLabel("");
 		label7.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		label7.setBounds(481, 98, 39, 17);
+		label7.setBounds(481, 98, 150, 17);
 		panel2.add(label7);
-		
-		JLabel label_1 = new JLabel("day");
-		label_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		label_1.setBounds(522, 98, 39, 17);
-		panel2.add(label_1);
 		
 		JLabel lblDeliveryPrice = new JLabel("Delivery price:");
 		lblDeliveryPrice.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblDeliveryPrice.setBounds(382, 126, 89, 17);
 		panel2.add(lblDeliveryPrice);
 		
-		JLabel label8 = new JLabel("   ---");
+		final JLabel label8 = new JLabel("");
 		label8.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		label8.setBounds(470, 126, 62, 17);
+		label8.setBounds(481, 126, 161, 17);
 		panel2.add(label8);
-		
-		JButton btnNewButton = new JButton("Count up");
-		btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		btnNewButton.setBounds(10, 134, 89, 23);
-		panel2.add(btnNewButton);
 		
 		JLabel lblSumma = new JLabel("summa:");
 		lblSumma.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblSumma.setBounds(123, 140, 58, 17);
 		panel2.add(lblSumma);
 		
-		JLabel label = new JLabel("");
+		final JLabel label = new JLabel("");
 		label.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		label.setBounds(188, 140, 85, 17);
 		panel2.add(label);
@@ -253,16 +238,16 @@ public class Window {
 		lblClient.setBounds(10, 201, 89, 17);
 		panel2.add(lblClient);
 		
-		txtMobilePhone = new JTextField();
-		txtMobilePhone.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		txtMobilePhone.setColumns(10);
-		txtMobilePhone.setBounds(76, 259, 243, 20);
-		panel2.add(txtMobilePhone);
+		txtPhone = new JTextField();
+		txtPhone.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		txtPhone.setColumns(10);
+		txtPhone.setBounds(76, 259, 243, 20);
+		panel2.add(txtPhone);
 		
 		txtEmail = new JTextField();
 		txtEmail.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		txtEmail.setColumns(10);
-		txtEmail.setBounds(76, 290, 243, 20);
+		txtEmail.setBounds(448, 259, 243, 20);
 		panel2.add(txtEmail);
 		
 		JLabel lblFullName = new JLabel("Full name:");
@@ -277,7 +262,7 @@ public class Window {
 		
 		JLabel lblEmail = new JLabel("Email:");
 		lblEmail.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblEmail.setBounds(10, 290, 65, 17);
+		lblEmail.setBounds(382, 259, 65, 17);
 		panel2.add(lblEmail);
 		
 		JLabel lblOrganization = new JLabel("Organization:");
@@ -285,22 +270,11 @@ public class Window {
 		lblOrganization.setBounds(382, 229, 89, 17);
 		panel2.add(lblOrganization);
 		
-		textField = new JTextField();
-		textField.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		textField.setColumns(10);
-		textField.setBounds(470, 228, 221, 20);
-		panel2.add(textField);
-		
-		textField_1 = new JTextField();
-		textField_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		textField_1.setColumns(10);
-		textField_1.setBounds(448, 259, 243, 20);
-		panel2.add(textField_1);
-		
-		JLabel lblAddres = new JLabel("Addres:");
-		lblAddres.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblAddres.setBounds(382, 259, 65, 17);
-		panel2.add(lblAddres);
+		txtOrganization = new JTextField();
+		txtOrganization.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		txtOrganization.setColumns(10);
+		txtOrganization.setBounds(470, 228, 221, 20);
+		panel2.add(txtOrganization);
 		
 		JLabel lblCountry = new JLabel("Country:");
 		lblCountry.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -311,11 +285,6 @@ public class Window {
 		lblFruit.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblFruit.setBounds(10, 13, 65, 17);
 		panel2.add(lblFruit);
-		
-		JButton btnNewButton_1 = new JButton("To order");
-		btnNewButton_1.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		btnNewButton_1.setBounds(515, 291, 89, 23);
-		panel2.add(btnNewButton_1);
 		
 		JLabel lblDeliveryMethod = new JLabel("Delivery method:");
 		lblDeliveryMethod.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -336,7 +305,7 @@ public class Window {
 		
 		final JComboBox comboBox3 = new JComboBox();
 		comboBox3.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		comboBox3.setModel(new DefaultComboBoxModel(new String[] {"Fura", "Aircraft", "Ship"}));
+		comboBox3.setModel(new DefaultComboBoxModel(deliveryBox));
 		comboBox3.setBounds(496, 68, 121, 20);
 		panel2.add(comboBox3);
 		
@@ -366,6 +335,13 @@ public class Window {
 			    	if (fruitBuy[id][0].equals(comboBox1.getSelectedItem())){
 			    		label1.setText(fruitSumm[id][0] + "$");
 			    		label4.setText(fruitSumm[id][1] + " day");
+			    		time_storage = Integer.parseInt(fruitSumm[id][1]);
+			    		if (txtQun.getText().equals(""));
+			    		else{
+				            String temp = label1.getText();
+				            summ = Integer.parseInt(txtQun.getText())*Integer.parseInt(temp.substring(0,temp.length()-1));
+							label3.setText(summ + "$");
+			    		}
 			    	}
 			    	id++;
 		    	}
@@ -374,7 +350,7 @@ public class Window {
 		
 		ActionListener countryListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-		    	id = 0;
+		    	int id = 0;
 		    	while (countryDistance[id][1] !=null){
 			    	if (countryDistance[id][0].equals(comboBox2.getSelectedItem())){
 			    		label5.setText(countryDistance[id][1] + " km");
@@ -384,20 +360,87 @@ public class Window {
 			}
 		};
 		
-		///////////////////////////////////
-		
-/*		ActionListener textListener = new ActionListener() {
-			public void textValueChanged(TextEvent e) {
-				if (txtQun.getText() != null) label3.setText(Integer.toString(Integer.parseInt(txtQun.getText())* Integer.parseInt(fruitSumm[id][0])));
-			}
-			@Override
+		ActionListener deliveryListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+		    	int id = 0;
+		    	while (id<3){
+			    	if (delivery[id][0].equals(comboBox3.getSelectedItem())){
+			    		float price_for_km = Float.parseFloat(delivery[id][1]);
+			    		int speed = Integer.parseInt(delivery[id][2]);
+			    		if (label5.getText().equals("")) label8.setText(price_for_km + "$");
+			    		else{
+		    			String temp = label5.getText();
+		    			time_delivery = Integer.parseInt(temp.substring(0, temp.length()-3)) / speed / 24;
+		    			if (time_delivery == 0) time_delivery = 1;
+		    			label7.setText(time_delivery + " day");
+		    			price = (int) (Integer.parseInt(temp.substring(0, temp.length()-3)) * price_for_km);
+		    			label8.setText(price + "$");
+			    		}
+			    	}
+			    	id++;
+		    	}
 			}
-		};*/
+		};
+		
+		DocumentListener listener = new DocumentListener()
+		{
+			 public void setSumm() {
+		            String temp = label1.getText();
+		            summ = Integer.parseInt(txtQun.getText())*Integer.parseInt(temp.substring(0,temp.length()-1));
+					label3.setText(summ + "$");
+				}
+		    public void insertUpdate(DocumentEvent event) { setSumm(); }
+			public void removeUpdate(DocumentEvent event) {}
+		    public void changedUpdate(DocumentEvent event) { setSumm(); }
+		};
 		
 		comboBox1.addActionListener(fruitListener);
 		comboBox2.addActionListener(countryListener);
-		comboBox3.addActionListener(fruitListener);
-		txtQun.addActionListener(textListener);
+		comboBox3.addActionListener(deliveryListener);
+		txtQun.getDocument().addDocumentListener(listener);
+		
+		JButton btnNewButton = new JButton("Count up");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if (label3.getText() != null && label8.getText() != null){
+				label.setText(Integer.toString(price + summ) + "$");
+				}
+			}
+		});
+		btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		btnNewButton.setBounds(10, 134, 89, 23);
+		panel2.add(btnNewButton);
+		
+		JButton btnNewButton_1 = new JButton("To order");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (label.getText().equals("") || label.getText().equals("0$")){
+					JOptionPane.showMessageDialog(null,
+					 "Count the summ.",
+					 "Error!",
+					JOptionPane.WARNING_MESSAGE);
+					if (txtFullName.getText().equals("") || txtPhone.getText().equals("") || txtEmail.getText().equals("") || txtOrganization.getText().equals("")){
+						JOptionPane.showMessageDialog(null,
+						"Fill in all the fields.",
+						"Error!",
+						JOptionPane.WARNING_MESSAGE);
+						if (time_storage < time_delivery+2){
+							JOptionPane.showMessageDialog(null,
+							"Time storage of fruits less time delivery.",
+							"Error!",
+							JOptionPane.WARNING_MESSAGE);
+						}
+					}
+				}
+				else{
+					DataBase.addData(txtFullName.getText(), txtPhone.getText(), txtEmail.getText(), (String) comboBox2.getSelectedItem(), txtOrganization.getText(), (String) comboBox1.getSelectedItem());
+					JOptionPane.showMessageDialog(null,
+						    "Your order is accepted.");
+				}
+			}
+		});
+		btnNewButton_1.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		btnNewButton_1.setBounds(316, 294, 89, 23);
+		panel2.add(btnNewButton_1);
 	}
 }
