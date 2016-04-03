@@ -51,13 +51,12 @@ public class DataBase {
 	
 	public static String[][] loadData(String tab, String nameCol1, String nameCol2){
 		String[][] top = new String[10][2];
-		String selectTableSQL = "SELECT " + nameCol1 + ", " + nameCol2 + " from " + tab;
+		String selectTableSQL = "SELECT " + nameCol1 + ", " + nameCol2 + " from " + tab + " ORDER BY " + nameCol2 + " DESC";
 		try {
 		    Connection dbConnection = getDBConnection();
 		    Statement statement = dbConnection.createStatement();
 		    // выбираем данные с БД
 		    ResultSet rs = statement.executeQuery(selectTableSQL);
-		 
 		    // И если что то было получено то цикл while сработает
 		    int row = 0;
 		    while (rs.next()) {
@@ -101,6 +100,33 @@ public class DataBase {
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
+	}
+	
+	public static void updateData(String tab, String nameCol1, String nameCol2, String valueCol1, int quantity_plus){
+		int quantity_tab = 0;
+		String loadDataSQL = "SELECT " + nameCol2 + " FROM " + tab + " WHERE " + nameCol1 + "='" + valueCol1 + "'";
+		try {
+		    Connection dbConnection = getDBConnection();
+		    Statement statement = dbConnection.createStatement();
+		    ResultSet rs = statement.executeQuery(loadDataSQL);
+		    while (rs.next()) {
+			    quantity_tab = Integer.parseInt(rs.getString(nameCol2));
+		    }
+		} catch (SQLException e) {
+		    System.out.println(e.getMessage());
+		}
+		int quantity_summ = quantity_tab + quantity_plus;
+		String updateDataSQL = "update " + tab + " set " + nameCol2 + " = " + quantity_summ + " where (" + nameCol1 + " = '" + valueCol1 + "')";
+		try {
+			Connection dbConnection = getDBConnection();
+			Statement statement;
+			statement = dbConnection.createStatement();
+			dbConnection = getDBConnection();
+			statement.execute(updateDataSQL);
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		//System.out.println(updateDataSQL);
 	}
 	
 	

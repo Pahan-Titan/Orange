@@ -20,6 +20,8 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.JTextPane;
+import java.awt.SystemColor;
 
 public class Window {
 
@@ -142,6 +144,26 @@ public class Window {
 		table2.getColumnModel().getColumn(0).setMinWidth(150);
 		table2.getColumnModel().getColumn(1).setResizable(false);
 		scrollPane2.setViewportView(table2);
+		
+		JTextPane txtpnThisProgramWas = new JTextPane();
+		txtpnThisProgramWas.setForeground(SystemColor.textText);
+		txtpnThisProgramWas.setEnabled(false);
+		txtpnThisProgramWas.setBackground(SystemColor.controlHighlight);
+		txtpnThisProgramWas.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		txtpnThisProgramWas.setText("This program was developed by students of the Chernihiv National Technological University for the course project.\r\nNot yavlyaetsya commercial offer. All rights reserved.\r\nFor cooperation to contact the sponsors.");
+		txtpnThisProgramWas.setBounds(10, 226, 684, 51);
+		panel1.add(txtpnThisProgramWas);
+		
+		JButton btnNewButton_2 = new JButton("Author");
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JOptionPane.showMessageDialog(null, "Author:\n"
+						+ "Kravchenko Pavel\n"
+						+ "Makarovec Anna\n");
+			}
+		});
+		btnNewButton_2.setBounds(10, 294, 86, 23);
+		panel1.add(btnNewButton_2);
 		
 					/**************** Вторая вкладка ****************/
 		
@@ -331,7 +353,7 @@ public class Window {
 		ActionListener fruitListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 		    	int id = 0;
-		    	while (fruitBuy[id][0] !=null && fruitBuy[id][1] !=null){
+		    	while (id<10){
 			    	if (fruitBuy[id][0].equals(comboBox1.getSelectedItem())){
 			    		label1.setText(fruitSumm[id][0] + "$");
 			    		label4.setText(fruitSumm[id][1] + " day");
@@ -434,8 +456,11 @@ public class Window {
 				}
 				else{
 					DataBase.addData(txtFullName.getText(), txtPhone.getText(), txtEmail.getText(), (String) comboBox2.getSelectedItem(), txtOrganization.getText(), (String) comboBox1.getSelectedItem());
+					DataBase.updateData("fruit", "fruit", "quantity_buy", (String) comboBox1.getSelectedItem(), Integer.parseInt(txtQun.getText()));
+					DataBase.updateData("country", "country", "quantity_buy", (String) comboBox2.getSelectedItem(), Integer.parseInt(txtQun.getText()));
 					JOptionPane.showMessageDialog(null,
 						    "Your order is accepted.");
+					
 				}
 			}
 		});
