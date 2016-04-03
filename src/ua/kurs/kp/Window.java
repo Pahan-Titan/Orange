@@ -373,7 +373,7 @@ public class Window {
 		ActionListener countryListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 		    	int id = 0;
-		    	while (countryDistance[id][1] !=null){
+		    	while (id<countryDistance.length){
 			    	if (countryDistance[id][0].equals(comboBox2.getSelectedItem())){
 			    		label5.setText(countryDistance[id][1] + " km");
 			    	}
