@@ -458,6 +458,12 @@ public class Window {
 					DataBase.addData(txtFullName.getText(), txtPhone.getText(), txtEmail.getText(), (String) comboBox2.getSelectedItem(), txtOrganization.getText(), (String) comboBox1.getSelectedItem());
 					DataBase.updateData("fruit", "fruit", "quantity_buy", (String) comboBox1.getSelectedItem(), Integer.parseInt(txtQun.getText()));
 					DataBase.updateData("country", "country", "quantity_buy", (String) comboBox2.getSelectedItem(), Integer.parseInt(txtQun.getText()));
+					EmailHandler.EmailHandler(txtEmail.getText() ,"Your order is accepted", "Dear " + txtFullName.getText() + "\n" +
+																		"Your order: " + comboBox1.getSelectedItem() + "\n" + 
+																		"to the amount of " + summ + "$ \n" +
+																		"Adopted. And it will be delivered in " + label7.getText() +
+																		"\n" +
+																		"Sincerely, Orange +");
 					JOptionPane.showMessageDialog(null,
 						    "Your order is accepted.");
 					

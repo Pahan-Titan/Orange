@@ -55,9 +55,7 @@ public class DataBase {
 		try {
 		    Connection dbConnection = getDBConnection();
 		    Statement statement = dbConnection.createStatement();
-		    // выбираем данные с БД
 		    ResultSet rs = statement.executeQuery(selectTableSQL);
-		    // И если что то было получено то цикл while сработает
 		    int row = 0;
 		    while (rs.next()) {
 		        top[row][0] = rs.getString(nameCol1);
@@ -68,7 +66,6 @@ public class DataBase {
 		    System.out.println(e.getMessage());
 		}
 		return top;
-
 	}
 	
 	public static String[] loadData (String tab, String nameCol){
@@ -126,7 +123,6 @@ public class DataBase {
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
-		//System.out.println(updateDataSQL);
 	}
 	
 	
